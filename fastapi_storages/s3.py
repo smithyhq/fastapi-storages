@@ -48,9 +48,9 @@ class S3Storage(BaseStorage):
 
     def __init__(self) -> None:
         assert boto3 is not None, "'boto3' is not installed"
-        assert not self.AWS_S3_ENDPOINT_URL.startswith(
-            "http"
-        ), "URL should not contain protocol"
+        assert not self.AWS_S3_ENDPOINT_URL.startswith("http"), (
+            "URL should not contain protocol"
+        )
 
         self._http_scheme = "https" if self.AWS_S3_USE_SSL else "http"
         self._url = f"{self._http_scheme}://{self.AWS_S3_ENDPOINT_URL}"
