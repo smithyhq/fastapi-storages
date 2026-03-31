@@ -1,18 +1,18 @@
 <p align="center">
-<a href="https://github.com/aminalaee/fastapi-storages">
-    <img width="500px" src="https://raw.githubusercontent.com/aminalaee/fastapi-storages/main/docs/assets/images/banner.png" alt"FastAPI_Storages">
+<a href="https://github.com/smithyhq/fastapi-storages">
+    <img width="500px" src="https://raw.githubusercontent.com/smithyhq/fastapi-storages/main/docs/assets/images/banner.png" alt"FastAPI_Storages">
 </a>
 </p>
 
 <p align="center">
-<a href="https://github.com/aminalaee/fastapi-storages/actions">
-    <img src="https://github.com/aminalaee/fastapi-storages/workflows/Tests/badge.svg" alt="Build Status">
+<a href="https://github.com/smithyhq/fastapi-storages/actions">
+    <img src="https://github.com/smithyhq/fastapi-storages/workflows/Tests/badge.svg" alt="Build Status">
 </a>
-<a href="https://github.com/aminalaee/fastapi-storages/actions">
-    <img src="https://github.com/aminalaee/fastapi-storages/workflows/Publish/badge.svg" alt="Publish Status">
+<a href="https://github.com/smithyhq/fastapi-storages/actions">
+    <img src="https://github.com/smithyhq/fastapi-storages/workflows/Publish/badge.svg" alt="Publish Status">
 </a>
-<a href="https://codecov.io/gh/aminalaee/fastapi-storages">
-    <img src="https://codecov.io/gh/aminalaee/fastapi-storages/branch/main/graph/badge.svg" alt="Coverage">
+<a href="https://codecov.io/gh/smithyhq/fastapi-storages">
+    <img src="https://codecov.io/gh/smithyhq/fastapi-storages/branch/main/graph/badge.svg" alt="Coverage">
 </a>
 <a href="https://pypi.org/project/fastapi-storages/">
     <img src="https://badge.fury.io/py/fastapi-storages.svg" alt="Package version">
@@ -32,9 +32,9 @@ Similar to `django-storages` project, but aiming to work with a wider range of d
 
 ---
 
-**Documentation**: [https://aminalaee.github.io/fastapi-storages](https://aminalaee.github.io/fastapi-storages)
+**Documentation**: [https://smithyhq.github.io/fastapi-storages](https://smithyhq.github.io/fastapi-storages)
 
-**Source Code**: [https://github.com/aminalaee/fastapi-storages](https://github.com/aminalaee/fastapi-storages)
+**Source Code**: [https://github.com/smithyhq/fastapi-storages](https://github.com/smithyhq/fastapi-storages)
 
 ---
 
