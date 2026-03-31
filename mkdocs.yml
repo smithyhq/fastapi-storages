@@ -1,21 +1,21 @@
 site_name: FastAPI Storages
 site_description: FastAPI Storages
-site_url: https://aminalaee.github.io/fastapi-storages
+site_url: https://smithyhq.github.io/fastapi-storages
 
 theme:
-  name: 'material'
+  name: "material"
   palette:
-      primary: white
+    primary: white
 
-repo_name: aminalaee/fastapi-storages
-repo_url: https://github.com/aminalaee/fastapi-storages
+repo_name: smithyhq/fastapi-storages
+repo_url: https://github.com/smithyhq/fastapi-storages
 edit_uri: ""
 
 nav:
-  - Introduction: 'index.md'
-  - Usage: 'usage.md'
+  - Introduction: "index.md"
+  - Usage: "usage.md"
   - API Reference:
-    - Storages: 'api_reference/storages.md'
+      - Storages: "api_reference/storages.md"
 
 markdown_extensions:
   - markdown.extensions.codehilite:
@@ -40,8 +40,6 @@ extra:
     property: G-MV427T1Z9X
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/aminalaee
-    - icon: fontawesome/brands/twitter
-      link: https://twitter.com/aminalaee
+      link: https://github.com/smithyhq
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/amin-alaee

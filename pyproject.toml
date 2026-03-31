@@ -15,7 +15,7 @@ requires-python = ">=3.8"
 license = "MIT"
 keywords = ["sqlalchemy", "django", "orm", "fastapi"]
 authors = [
-  { name = "Amin Alaee", email = "me@aminalaee.dev" },
+  { name = "Amin Alaee", email = "mohammadamin.alaee@gmail.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -44,9 +44,9 @@ full = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/aminalaee/fastapi-storages#readme"
-Issues = "https://github.com/aminalaee/fastapi-storages/issues"
-Source = "https://github.com/aminalaee/fastapi-storages"
+Documentation = "https://github.com/smithyhq/fastapi-storages#readme"
+Issues = "https://github.com/smithyhq/fastapi-storages/issues"
+Source = "https://github.com/smithyhq/fastapi-storages"
 
 [dependency-groups]
 dev = [
