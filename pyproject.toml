@@ -25,6 +25,8 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Database",
   "Topic :: Database :: Database Engines/Servers",
   "Topic :: Internet",
@@ -52,7 +54,7 @@ Source = "https://github.com/smithyhq/fastapi-storages"
 dev = [
   "build",
   "coverage",
-  "moto==4.2.11",
+  "moto[s3]>=5",
   "mypy",
   "peewee>=3",
   "Pillow>=10",

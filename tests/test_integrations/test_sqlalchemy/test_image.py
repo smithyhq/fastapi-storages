@@ -45,7 +45,7 @@ def test_valid_image(tmp_path: Path) -> None:
         session.commit()
 
         assert model.image.name == "image.png"
-        assert model.image.size == 5847
+        assert model.image.size == input_file.stat().st_size
         assert model.image.path == str(tmp_path / "image.png")
 
 

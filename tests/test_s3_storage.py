@@ -4,11 +4,12 @@ from pathlib import Path
 import boto3
 import pytest
 from botocore.exceptions import ClientError
-from moto import mock_s3
+from moto import mock_aws
 
 from fastapi_storages import S3Storage, StorageFile
 
 os.environ["MOTO_S3_CUSTOM_ENDPOINTS"] = "http://custom.s3.endpoint"
+os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 
 class PrivateS3Storage(S3Storage):
@@ -19,7 +20,7 @@ class PrivateS3Storage(S3Storage):
     AWS_S3_USE_SSL = False
 
 
-@mock_s3
+@mock_aws
 def test_s3_storage_methods(tmp_path: Path) -> None:
     s3 = boto3.client("s3")
     s3.create_bucket(Bucket="bucket")
@@ -46,7 +47,7 @@ def test_s3_storage_methods(tmp_path: Path) -> None:
     assert storage.get_size("example.txt") == 3
 
 
-@mock_s3
+@mock_aws
 def test_s3_storage_querystring_auth(tmp_path: Path) -> None:
     s3 = boto3.client("s3")
     s3.create_bucket(Bucket="bucket")
@@ -67,7 +68,7 @@ def test_s3_storage_querystring_auth(tmp_path: Path) -> None:
     assert storage.get_path("test.txt").count("Expires=") == 1
 
 
-@mock_s3
+@mock_aws
 def test_s3_storage_custom_domain(tmp_path: Path) -> None:
     s3 = boto3.client("s3")
     s3.create_bucket(Bucket="bucket")
@@ -83,7 +84,7 @@ def test_s3_storage_custom_domain(tmp_path: Path) -> None:
     assert storage.get_path("test.txt") == "http://s3.fastapi.storages/test.txt"
 
 
-@mock_s3
+@mock_aws
 def test_s3_storage_rename_file_names(tmp_path: Path) -> None:
     s3 = boto3.client("s3")
     s3.create_bucket(Bucket="bucket")
@@ -115,7 +116,7 @@ def test_s3_storage_rename_file_names(tmp_path: Path) -> None:
     assert file3.path == "http://s3.fastapi.storages/duplicate_2.txt"
 
 
-@mock_s3
+@mock_aws
 def test_s3_storage_delete_file(tmp_path: Path) -> None:
     s3 = boto3.client("s3")
     s3.create_bucket(Bucket="bucket")
