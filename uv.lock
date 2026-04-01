@@ -930,7 +930,7 @@ wheels = [
 
 [[package]]
 name = "fastapi-storages"
-version = "0.3.0"
+version = "0.4.0"
 source = { editable = "." }
 dependencies = [
     { name = "boto3", version = "1.37.38", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
