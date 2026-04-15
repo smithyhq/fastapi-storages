@@ -14,7 +14,7 @@ from tests.test_integrations.utils import UploadFile
 db = SqliteDatabase(database_name)
 
 
-class TestModel(Model):
+class ModelTest(Model):
     id = AutoField(primary_key=True)
     image = ImageType(storage=FileSystemStorage(path="/tmp"), null=True)
 
@@ -24,21 +24,21 @@ class TestModel(Model):
 
 @pytest.fixture(autouse=True)
 def prepare_database():
-    db.create_tables([TestModel])
+    db.create_tables([ModelTest])
     yield
-    db.drop_tables([TestModel])
+    db.drop_tables([ModelTest])
 
 
 def test_valid_image(tmp_path: Path) -> None:
-    TestModel.image.storage = FileSystemStorage(path=str(tmp_path))
+    ModelTest.image.storage = FileSystemStorage(path=str(tmp_path))
 
     input_file = tmp_path / "input.png"
     image = Image.new("RGB", (800, 1280), (255, 255, 255))
     image.save(input_file, "PNG")
 
     upload_file = UploadFile(file=input_file.open("rb"), filename="image.png")
-    TestModel.create(image=upload_file)
-    model = TestModel.get()
+    ModelTest.create(image=upload_file)
+    model = ModelTest.get()
 
     assert model.image.name == "image.png"
     assert model.image.size == input_file.stat().st_size
@@ -51,19 +51,19 @@ def test_invalid_image(tmp_path: Path) -> None:
     upload_file = UploadFile(file=input_file.open("rb"), filename="image.png")
 
     with pytest.raises(ValidationException):
-        TestModel.create(image=upload_file)
+        ModelTest.create(image=upload_file)
 
 
 def test_nullable_image() -> None:
-    TestModel.create(image=None)
-    model = TestModel.get()
+    ModelTest.create(image=None)
+    model = ModelTest.get()
 
     assert model.image is None
 
 
 def test_clear_empty_image() -> None:
     upload_file = UploadFile(file=io.BytesIO(b""), filename="")
-    TestModel.create(image=upload_file)
-    model = TestModel.get()
+    ModelTest.create(image=upload_file)
+    model = ModelTest.get()
 
     assert model.image is None

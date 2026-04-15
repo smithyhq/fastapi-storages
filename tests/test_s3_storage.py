@@ -135,3 +135,30 @@ def test_s3_storage_delete_file(tmp_path: Path) -> None:
 
     with pytest.raises(ClientError):
         s3.head_object(Bucket="bucket", Key="file.txt")
+
+
+@mock_aws
+def test_s3_storage_from_env(monkeypatch) -> None:
+    monkeypatch.setenv("AWS_ACCESS_KEY_ID", "access")
+    monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")
+    monkeypatch.setenv("AWS_S3_BUCKET_NAME", "bucket")
+    monkeypatch.setenv("AWS_S3_ENDPOINT_URL", "custom.s3.endpoint")
+    monkeypatch.setenv("AWS_S3_USE_SSL", "false")
+    monkeypatch.setenv("AWS_DEFAULT_ACL", "public-read")
+    monkeypatch.setenv("AWS_QUERYSTRING_AUTH", "false")
+    monkeypatch.setenv("AWS_S3_CUSTOM_DOMAIN", "")
+
+    # Reload so class-level lookup_env calls pick up monkeypatched env
+    import importlib
+    import fastapi_storages.s3 as s3_module
+
+    importlib.reload(s3_module)
+
+    boto3.client("s3").create_bucket(Bucket="bucket")
+
+    storage = s3_module.S3Storage()
+    assert storage.AWS_S3_BUCKET_NAME == "bucket"
+    assert storage.AWS_S3_ENDPOINT_URL == "custom.s3.endpoint"
+    assert storage.AWS_S3_USE_SSL is False
+    assert storage.AWS_DEFAULT_ACL == "public-read"
+    assert storage.get_path("test.txt") == "http://custom.s3.endpoint/bucket/test.txt"
