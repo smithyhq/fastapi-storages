@@ -1,5 +1,4 @@
 import mimetypes
-import os
 from pathlib import Path
 from typing import BinaryIO
 
@@ -9,7 +8,7 @@ except ImportError:  # pragma: no cover
     boto3 = None
 
 from fastapi_storages.base import BaseStorage
-from fastapi_storages.utils import secure_filename
+from fastapi_storages.utils import lookup_env, secure_filename
 
 
 class S3Storage(BaseStorage):
@@ -21,29 +20,29 @@ class S3Storage(BaseStorage):
 
     default_content_type = "application/octet-stream"
 
-    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID", "")
+    AWS_ACCESS_KEY_ID = lookup_env("AWS_ACCESS_KEY_ID")
     """AWS access key ID. Either set here or as an environment variable."""
 
-    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY", "")
+    AWS_SECRET_ACCESS_KEY = lookup_env("AWS_SECRET_ACCESS_KEY")
     """AWS secret access key. Either set here or as an environment variable."""
 
-    AWS_S3_BUCKET_NAME = ""
+    AWS_S3_BUCKET_NAME = lookup_env("AWS_S3_BUCKET_NAME")
     """AWS S3 bucket name to use."""
 
-    AWS_S3_ENDPOINT_URL = ""
+    AWS_S3_ENDPOINT_URL = lookup_env("AWS_S3_ENDPOINT_URL")
     """AWS S3 endpoint URL."""
 
-    AWS_S3_USE_SSL = True
+    AWS_S3_USE_SSL = lookup_env("AWS_S3_USE_SSL", True)
     """Indicate if SSL should be used."""
 
-    AWS_DEFAULT_ACL = ""
+    AWS_DEFAULT_ACL = lookup_env("AWS_DEFAULT_ACL")
     """Optional ACL set on the object like `public-read`.
     By default file will be private."""
 
-    AWS_QUERYSTRING_AUTH = False
+    AWS_QUERYSTRING_AUTH = lookup_env("AWS_QUERYSTRING_AUTH", False)
     """Indicate if query parameter authentication should be used in URLs."""
 
-    AWS_S3_CUSTOM_DOMAIN = ""
+    AWS_S3_CUSTOM_DOMAIN = lookup_env("AWS_S3_CUSTOM_DOMAIN")
     """Custom domain to use for serving object URLs."""
 
     def __init__(self) -> None:
