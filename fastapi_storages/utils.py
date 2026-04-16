@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Union, overload
+from typing import overload
 
 _filename_ascii_strip_re = re.compile(r"[^A-Za-z0-9_.-]")
 
@@ -13,7 +13,7 @@ def lookup_env(name: str, default: bool) -> bool: ...
 def lookup_env(name: str, default: str = ...) -> str: ...
 
 
-def lookup_env(name: str, default: Union[str, bool] = "") -> Union[str, bool]:
+def lookup_env(name: str, default: str | bool = "") -> str | bool:
     """
     Read environment variable with type coercion.
     If default is bool, coerce the env value: "true", "1", "yes" -> True, else False.
