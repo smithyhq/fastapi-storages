@@ -34,12 +34,23 @@ classifiers = [
   "Topic :: Internet :: WWW/HTTP",
   "Typing :: Typed",
 ]
-dependencies = [
-  "boto3~=1.25",
-]
+dependencies = []
 
 [project.optional-dependencies]
+s3 = [
+  "boto3~=1.25",
+]
+sqlalchemy = [
+  "sqlalchemy>=1.4",
+]
+peewee = [
+  "peewee>=3",
+]
+image = [
+  "Pillow>=10",
+]
 full = [
+  "boto3~=1.25",
   "Pillow>=10",
   "sqlalchemy>=1.4",
   "peewee>=3",
