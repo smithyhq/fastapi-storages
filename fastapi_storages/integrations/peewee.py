@@ -35,6 +35,7 @@ class FileType(CharField):
         if value is None:
             return value
         if len(value.file.read(1)) != 1:
+            value.file.seek(0)
             return None
 
         file = StorageFile(name=value.filename, storage=self.storage)
@@ -75,23 +76,24 @@ class ImageType(CharField):
         if value is None:
             return value
         if len(value.file.read(1)) != 1:
+            value.file.seek(0)
             return None
 
         try:
-            image_file = Image.open(value.file)
-            image_file.verify()
+            with Image.open(value.file) as image_file:
+                image_file.verify()
+                height, width = image_file.height, image_file.width
         except UnidentifiedImageError:
             raise ValidationException("Invalid image file")
 
         image = StorageImage(
             name=value.filename,
             storage=self.storage,
-            height=image_file.height,
-            width=image_file.width,
+            height=height,
+            width=width,
         )
         image.write(file=value.file)
 
-        image_file.close()
         value.file.close()
         return image.name
 
@@ -99,7 +101,7 @@ class ImageType(CharField):
         if value is None:
             return value
 
-        image = Image.open(self.storage.get_path(value))
-        return StorageImage(
-            name=value, storage=self.storage, height=image.height, width=image.width
-        )
+        with Image.open(self.storage.get_path(value)) as image:
+            return StorageImage(
+                name=value, storage=self.storage, height=image.height, width=image.width
+            )

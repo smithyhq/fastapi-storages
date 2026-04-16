@@ -126,6 +126,15 @@ the file is stored in the specified storage and then the record is saved.
 You can just replace the storage with `S3Storage` and everything works without the change.
 This will make your code cleaner and more readable.
 
+#### Async Limitation
+
+`FileType` and `ImageType` upload files synchronously inside SQLAlchemy's `process_bind_param`, which is a sync-only interface. This means file I/O (filesystem write or S3 network call) blocks the calling thread during ORM save.
+
+For **sync SQLAlchemy** this is expected behaviour. For **async SQLAlchemy** (`AsyncSession`), SQLAlchemy uses a greenlet bridge that runs on the event loop thread, so the blocking still occurs.
+
+!!! warning
+    Avoid using `FileType` or `ImageType` with `AsyncSession` and a slow remote storage (e.g. S3) in latency-sensitive endpoints. For those cases, upload the file manually using `asyncio.to_thread` before the ORM save, and assign the resulting filename string directly to the model attribute.
+
 #### Integration with Alembic
 
 By default, custom types are not registered in Alembic's migrations.

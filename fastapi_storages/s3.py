@@ -5,9 +5,11 @@ from typing import BinaryIO
 try:
     import boto3
     from botocore.config import Config
+    from botocore.exceptions import ClientError
 except ImportError:  # pragma: no cover
     boto3 = None
     Config = None
+    ClientError = None  # type: ignore[assignment,misc]
 
 from fastapi_storages.base import BaseStorage
 from fastapi_storages.utils import lookup_env, secure_filename
@@ -53,6 +55,7 @@ class S3Storage(BaseStorage):
     def __init__(self) -> None:
         assert boto3 is not None, "'boto3' is not installed"
         assert Config is not None, "'boto3' is not installed"
+        assert ClientError is not None, "'boto3' is not installed"
         assert not self.AWS_S3_ENDPOINT_URL.startswith("http"), (
             "URL should not contain protocol"
         )
@@ -154,8 +157,8 @@ class S3Storage(BaseStorage):
     def _check_object_exists(self, key: str) -> bool:
         try:
             self._s3.head_object(Bucket=self.AWS_S3_BUCKET_NAME, Key=key)
-        except boto3.exceptions.botocore.exceptions.ClientError as e:
-            if e.response["Error"]["Code"] == "404":
+            return True
+        except ClientError as e:
+            if e.response.get("Error", {}).get("Code") == "404":
                 return False
-
-        return True
+            raise
