@@ -42,6 +42,15 @@ Similar to `django-storages` project, but aiming to work with a wider range of d
 
 ```console
 pip install fastapi-storages
+```
+
+Install optional extras based on what you need:
+
+```console
+pip install 'fastapi-storages[s3]'
+pip install 'fastapi-storages[sqlalchemy]'
+pip install 'fastapi-storages[peewee]'
+pip install 'fastapi-storages[image]'
 pip install 'fastapi-storages[full]'
 ```
 
