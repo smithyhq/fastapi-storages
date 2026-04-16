@@ -932,17 +932,30 @@ wheels = [
 name = "fastapi-storages"
 version = "0.4.0"
 source = { editable = "." }
-dependencies = [
-    { name = "boto3", version = "1.37.38", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
-    { name = "boto3", version = "1.42.79", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
-]
 
 [package.optional-dependencies]
 full = [
+    { name = "boto3", version = "1.37.38", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "boto3", version = "1.42.79", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "peewee" },
     { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pillow", version = "11.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
     { name = "pillow", version = "12.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+    { name = "sqlalchemy" },
+]
+image = [
+    { name = "pillow", version = "10.4.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "pillow", version = "11.3.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.9.*'" },
+    { name = "pillow", version = "12.1.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.10'" },
+]
+peewee = [
+    { name = "peewee" },
+]
+s3 = [
+    { name = "boto3", version = "1.37.38", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
+    { name = "boto3", version = "1.42.79", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
+]
+sqlalchemy = [
     { name = "sqlalchemy" },
 ]
 
@@ -980,12 +993,16 @@ lint = [
 
 [package.metadata]
 requires-dist = [
-    { name = "boto3", specifier = "~=1.25" },
+    { name = "boto3", marker = "extra == 'full'", specifier = "~=1.25" },
+    { name = "boto3", marker = "extra == 's3'", specifier = "~=1.25" },
     { name = "peewee", marker = "extra == 'full'", specifier = ">=3" },
+    { name = "peewee", marker = "extra == 'peewee'", specifier = ">=3" },
     { name = "pillow", marker = "extra == 'full'", specifier = ">=10" },
+    { name = "pillow", marker = "extra == 'image'", specifier = ">=10" },
     { name = "sqlalchemy", marker = "extra == 'full'", specifier = ">=1.4" },
+    { name = "sqlalchemy", marker = "extra == 'sqlalchemy'", specifier = ">=1.4" },
 ]
-provides-extras = ["full"]
+provides-extras = ["s3", "sqlalchemy", "peewee", "image", "full"]
 
 [package.metadata.requires-dev]
 dev = [

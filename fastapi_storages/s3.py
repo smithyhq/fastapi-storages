@@ -4,8 +4,10 @@ from typing import BinaryIO
 
 try:
     import boto3
+    from botocore.config import Config
 except ImportError:  # pragma: no cover
     boto3 = None
+    Config = None
 
 from fastapi_storages.base import BaseStorage
 from fastapi_storages.utils import lookup_env, secure_filename
@@ -45,20 +47,30 @@ class S3Storage(BaseStorage):
     AWS_S3_CUSTOM_DOMAIN = lookup_env("AWS_S3_CUSTOM_DOMAIN")
     """Custom domain to use for serving object URLs."""
 
+    AWS_S3_SIGNATURE_VERSION = lookup_env("AWS_S3_SIGNATURE_VERSION")
+    """Signature version for request signing, e.g. "s3v4"."""
+
     def __init__(self) -> None:
         assert boto3 is not None, "'boto3' is not installed"
+        assert Config is not None, "'boto3' is not installed"
         assert not self.AWS_S3_ENDPOINT_URL.startswith("http"), (
             "URL should not contain protocol"
         )
 
         self._http_scheme = "https" if self.AWS_S3_USE_SSL else "http"
         self._url = f"{self._http_scheme}://{self.AWS_S3_ENDPOINT_URL}"
+        config = (
+            Config(signature_version=self.AWS_S3_SIGNATURE_VERSION)
+            if self.AWS_S3_SIGNATURE_VERSION
+            else None
+        )
         self._s3 = boto3.client(
             "s3",
             endpoint_url=self._url,
             use_ssl=self.AWS_S3_USE_SSL,
             aws_access_key_id=self.AWS_ACCESS_KEY_ID,
             aws_secret_access_key=self.AWS_SECRET_ACCESS_KEY,
+            config=config,
         )
 
     def get_name(self, name: str) -> str:

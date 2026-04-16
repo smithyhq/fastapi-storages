@@ -18,6 +18,7 @@ class PrivateS3Storage(S3Storage):
     AWS_S3_BUCKET_NAME = "bucket"
     AWS_S3_ENDPOINT_URL = "custom.s3.endpoint"
     AWS_S3_USE_SSL = False
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
 
 
 @mock_aws
@@ -63,9 +64,9 @@ def test_s3_storage_querystring_auth(tmp_path: Path) -> None:
     assert storage.get_path("test.txt").startswith(
         "http://custom.s3.endpoint/bucket/test.txt?"
     )
-    assert storage.get_path("test.txt").count("AWSAccessKeyId=access") == 1
-    assert storage.get_path("test.txt").count("Signature=") == 1
-    assert storage.get_path("test.txt").count("Expires=") == 1
+    assert storage.get_path("test.txt").count("X-Amz-Credential=access") == 1
+    assert storage.get_path("test.txt").count("X-Amz-Signature=") == 1
+    assert storage.get_path("test.txt").count("X-Amz-Expires=") == 1
 
 
 @mock_aws
@@ -147,6 +148,7 @@ def test_s3_storage_from_env(monkeypatch) -> None:
     monkeypatch.setenv("AWS_DEFAULT_ACL", "public-read")
     monkeypatch.setenv("AWS_QUERYSTRING_AUTH", "false")
     monkeypatch.setenv("AWS_S3_CUSTOM_DOMAIN", "")
+    monkeypatch.setenv("AWS_S3_SIGNATURE_VERSION", "s3v4")
 
     # Reload so class-level lookup_env calls pick up monkeypatched env
     import importlib
@@ -161,4 +163,5 @@ def test_s3_storage_from_env(monkeypatch) -> None:
     assert storage.AWS_S3_ENDPOINT_URL == "custom.s3.endpoint"
     assert storage.AWS_S3_USE_SSL is False
     assert storage.AWS_DEFAULT_ACL == "public-read"
+    assert storage.AWS_S3_SIGNATURE_VERSION == "s3v4"
     assert storage.get_path("test.txt") == "http://custom.s3.endpoint/bucket/test.txt"
