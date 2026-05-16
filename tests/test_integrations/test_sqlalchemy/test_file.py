@@ -65,3 +65,21 @@ def test_clear_empty_file() -> None:
         session.commit()
 
         assert model.file is None
+
+
+def test_filter_by_string_value(tmp_path: Path) -> None:
+    Model.file.type.storage = FileSystemStorage(path=str(tmp_path))
+
+    input_file = tmp_path / "input.txt"
+    input_file.write_bytes(b"123")
+
+    upload_file = UploadFile(file=input_file.open("rb"), filename="photo.jpg")
+    model = Model(file=upload_file)
+
+    with Session(engine) as session:
+        session.add(model)
+        session.commit()
+
+        result = session.query(Model).filter(Model.file.endswith(".jpg")).first()
+        assert result is not None
+        assert result.file.name == "photo.jpg"

@@ -41,6 +41,8 @@ class FileType(TypeDecorator):
     def process_bind_param(self, value: Any, dialect: Dialect) -> Optional[str]:
         if value is None:
             return value
+        if isinstance(value, str):
+            return value
         if len(value.file.read(1)) != 1:
             value.file.seek(0)
             return None
@@ -89,6 +91,8 @@ class ImageType(TypeDecorator):
 
     def process_bind_param(self, value: Any, dialect: Dialect) -> Optional[str]:
         if value is None:
+            return value
+        if isinstance(value, str):
             return value
         if len(value.file.read(1)) != 1:
             value.file.seek(0)
