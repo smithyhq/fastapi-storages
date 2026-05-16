@@ -52,6 +52,10 @@ class S3Storage(BaseStorage):
     AWS_S3_SIGNATURE_VERSION = lookup_env("AWS_S3_SIGNATURE_VERSION")
     """Signature version for request signing, e.g. "s3v4"."""
 
+    AWS_S3_OBJECT_PARAMETERS: dict = {}
+    """Extra parameters passed to every upload.
+    E.g. {"ServerSideEncryption": "aws:kms", "SSEKMSKeyId": "..."}."""
+
     def __init__(self) -> None:
         assert boto3 is not None, "'boto3' is not installed"
         assert Config is not None, "'boto3' is not installed"
@@ -136,9 +140,10 @@ class S3Storage(BaseStorage):
         file.seek(0, 0)
         key = self.get_name(name)
         content_type, _ = mimetypes.guess_type(key)
-        params = {
+        params: dict = {
             "ACL": self.AWS_DEFAULT_ACL,
             "ContentType": content_type or self.default_content_type,
+            **self.AWS_S3_OBJECT_PARAMETERS,
         }
         self._s3.upload_fileobj(file, self.AWS_S3_BUCKET_NAME, key, ExtraArgs=params)
         return key

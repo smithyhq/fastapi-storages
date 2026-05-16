@@ -139,6 +139,26 @@ def test_s3_storage_delete_file(tmp_path: Path) -> None:
 
 
 @mock_aws
+def test_s3_storage_object_parameters(tmp_path: Path) -> None:
+    s3 = boto3.client("s3", region_name="us-east-1")
+    s3.create_bucket(Bucket="bucket")
+
+    tmp_file = tmp_path / "example.txt"
+    tmp_file.write_bytes(b"hello")
+
+    class KMSStorage(PrivateS3Storage):
+        AWS_S3_OBJECT_PARAMETERS = {
+            "ServerSideEncryption": "aws:kms",
+            "SSEKMSKeyId": "arn:aws:kms:us-east-1:123456789012:key/test-key-id",
+        }
+
+    storage = KMSStorage()
+    key = storage.write(tmp_file.open("rb"), "example.txt")
+    assert key == "example.txt"
+    assert storage.get_size("example.txt") == 5
+
+
+@mock_aws
 def test_s3_storage_no_explicit_credentials() -> None:
     s3 = boto3.client("s3", region_name="us-east-1")
     s3.create_bucket(Bucket="bucket")
