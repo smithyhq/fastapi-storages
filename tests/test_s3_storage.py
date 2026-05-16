@@ -139,6 +139,58 @@ def test_s3_storage_delete_file(tmp_path: Path) -> None:
 
 
 @mock_aws
+def test_s3_storage_no_explicit_credentials() -> None:
+    s3 = boto3.client("s3", region_name="us-east-1")
+    s3.create_bucket(Bucket="bucket")
+
+    class NoCredStorage(S3Storage):
+        AWS_ACCESS_KEY_ID = None
+        AWS_SECRET_ACCESS_KEY = None
+        AWS_S3_BUCKET_NAME = "bucket"
+        AWS_S3_ENDPOINT_URL = "custom.s3.endpoint"
+        AWS_S3_USE_SSL = False
+
+    storage = NoCredStorage()
+    assert storage.get_path("test.txt") == "http://custom.s3.endpoint/bucket/test.txt"
+
+
+@mock_aws
+def test_s3_storage_no_endpoint_url(monkeypatch) -> None:
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+    s3 = boto3.client("s3", region_name="us-east-1")
+    s3.create_bucket(Bucket="bucket")
+
+    class NoEndpointStorage(S3Storage):
+        AWS_ACCESS_KEY_ID = "access"
+        AWS_SECRET_ACCESS_KEY = "secret"
+        AWS_S3_BUCKET_NAME = "bucket"
+        AWS_S3_ENDPOINT_URL = None
+        AWS_S3_USE_SSL = True
+
+    storage = NoEndpointStorage()
+    assert storage._url is not None
+    assert storage.get_path("test.txt").endswith("/bucket/test.txt")
+
+
+@mock_aws
+def test_s3_storage_empty_endpoint_url_falls_back(monkeypatch) -> None:
+    monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
+    s3 = boto3.client("s3", region_name="us-east-1")
+    s3.create_bucket(Bucket="bucket")
+
+    class EmptyEndpointStorage(S3Storage):
+        AWS_ACCESS_KEY_ID = "access"
+        AWS_SECRET_ACCESS_KEY = "secret"
+        AWS_S3_BUCKET_NAME = "bucket"
+        AWS_S3_ENDPOINT_URL = ""
+        AWS_S3_USE_SSL = True
+
+    storage = EmptyEndpointStorage()
+    assert storage._url is not None
+    assert storage.get_path("test.txt").endswith("/bucket/test.txt")
+
+
+@mock_aws
 def test_s3_storage_from_env(monkeypatch) -> None:
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "access")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "secret")

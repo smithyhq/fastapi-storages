@@ -56,25 +56,35 @@ class S3Storage(BaseStorage):
         assert boto3 is not None, "'boto3' is not installed"
         assert Config is not None, "'boto3' is not installed"
         assert ClientError is not None, "'boto3' is not installed"
-        assert not self.AWS_S3_ENDPOINT_URL.startswith("http"), (
-            "URL should not contain protocol"
-        )
 
         self._http_scheme = "https" if self.AWS_S3_USE_SSL else "http"
-        self._url = f"{self._http_scheme}://{self.AWS_S3_ENDPOINT_URL}"
-        config = (
-            Config(signature_version=self.AWS_S3_SIGNATURE_VERSION)
-            if self.AWS_S3_SIGNATURE_VERSION
-            else None
-        )
-        self._s3 = boto3.client(
-            "s3",
-            endpoint_url=self._url,
-            use_ssl=self.AWS_S3_USE_SSL,
-            aws_access_key_id=self.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=self.AWS_SECRET_ACCESS_KEY,
-            config=config,
-        )
+
+        client_kwargs: dict = {"use_ssl": self.AWS_S3_USE_SSL}
+
+        if self.AWS_S3_ENDPOINT_URL:
+            assert not self.AWS_S3_ENDPOINT_URL.startswith("http"), (
+                "URL should not contain protocol"
+            )
+            client_kwargs["endpoint_url"] = (
+                f"{self._http_scheme}://{self.AWS_S3_ENDPOINT_URL}"
+            )
+
+        if self.AWS_ACCESS_KEY_ID:
+            client_kwargs["aws_access_key_id"] = self.AWS_ACCESS_KEY_ID
+        if self.AWS_SECRET_ACCESS_KEY:
+            client_kwargs["aws_secret_access_key"] = self.AWS_SECRET_ACCESS_KEY
+
+        if self.AWS_S3_SIGNATURE_VERSION:
+            client_kwargs["config"] = Config(
+                signature_version=self.AWS_S3_SIGNATURE_VERSION
+            )
+
+        self._s3 = boto3.client("s3", **client_kwargs)
+
+        if self.AWS_S3_ENDPOINT_URL:
+            self._url = f"{self._http_scheme}://{self.AWS_S3_ENDPOINT_URL}"
+        else:
+            self._url = self._s3.meta.endpoint_url
 
     def get_name(self, name: str) -> str:
         """
@@ -102,9 +112,8 @@ class S3Storage(BaseStorage):
             params = {"Bucket": self.AWS_S3_BUCKET_NAME, "Key": key}
             return self._s3.generate_presigned_url("get_object", Params=params)
 
-        return "{}://{}/{}/{}".format(
-            self._http_scheme,
-            self.AWS_S3_ENDPOINT_URL,
+        return "{}/{}/{}".format(
+            self._url,
             self.AWS_S3_BUCKET_NAME,
             key,
         )
