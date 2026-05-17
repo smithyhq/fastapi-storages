@@ -22,7 +22,8 @@ class FileSystemStorage(BaseStorage):
         Get the normalized name of the file.
         """
 
-        return secure_filename(Path(name).name)
+        parts = [s for p in Path(name).parts if (s := secure_filename(p))]
+        return str(Path(*parts)) if parts else secure_filename(name)
 
     def get_path(self, name: str) -> str:
         """
@@ -54,6 +55,7 @@ class FileSystemStorage(BaseStorage):
         filename = self.get_name(name)
         path = self.get_path(filename)
 
+        self._path.joinpath(filename).parent.mkdir(parents=True, exist_ok=True)
         file.seek(0, 0)
         with open(path, "wb") as output:
             while True:
@@ -73,11 +75,13 @@ class FileSystemStorage(BaseStorage):
 
     def generate_new_filename(self, filename: str) -> str:
         counter = 0
+        prefix = Path(filename).parent
+        stem = Path(filename).stem
+        extension = Path(filename).suffix
         path = self._path / filename
-        stem, extension = Path(filename).stem, Path(filename).suffix
 
         while path.exists():
             counter += 1
-            path = self._path / f"{stem}_{counter}{extension}"
+            path = self._path / prefix / f"{stem}_{counter}{extension}"
 
-        return path.name
+        return str(prefix / path.name)
