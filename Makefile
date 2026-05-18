@@ -25,13 +25,10 @@ format:
 	uv run ruff check --fix $(PY_ARGS)
 
 docs-build:
-	uv run mkdocs build
+	uv run zensical build
 
 docs-serve:
-	uv run mkdocs serve --dev-addr localhost:8080
-
-docs-deploy:
-	uv run mkdocs gh-deploy --force
+	uv run zensical serve --dev-addr localhost:8080
 
 build:
 	uv build
@@ -40,4 +37,4 @@ publish:
 	uv publish
 
 
-.PHONY: setup test cov lint format docs-build docs-serve docs-deploy build publish
+.PHONY: setup test cov lint format docs-build docs-serve build publish

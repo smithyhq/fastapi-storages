@@ -3,9 +3,7 @@ site_description: FastAPI Storages
 site_url: https://smithyhq.github.io/fastapi-storages
 
 theme:
-  name: "material"
-  palette:
-    primary: white
+  name: "zensical"
 
 repo_name: smithyhq/fastapi-storages
 repo_url: https://github.com/smithyhq/fastapi-storages
