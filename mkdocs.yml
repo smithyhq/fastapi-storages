@@ -4,6 +4,17 @@ site_url: https://smithyhq.github.io/fastapi-storages
 
 theme:
   name: "zensical"
+  palette:
+    - scheme: default
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: lucide/moon
+        name: Switch to light mode
+  icon:
+    repo: simple/github
 
 repo_name: smithyhq/fastapi-storages
 repo_url: https://github.com/smithyhq/fastapi-storages
